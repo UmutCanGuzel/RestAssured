@@ -1,9 +1,13 @@
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+
+import io.restassured.response.Response;
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
 
-public class ZippoTestExtract {
+public class _02_ZippoTestExtract {
     @Test
     public void extractingJsonPath(){
         String countryName=
@@ -55,11 +59,64 @@ public class ZippoTestExtract {
                 given()
                         .when()
                         .get("https://gorest.co.in/public/v1/users")
+
                         .then()
+                        .log().body()
                         .extract().path("meta.pagination.limit")
                 ;
         System.out.println("limit = " + limit);
         Assert.assertTrue(limit==10);
        // Assert.assertEquals(limit,10);
+    }
+    @Test
+    public void extractingJsonPath5(){
+        List<Integer> idler=
+                given()
+                        .when()
+                        .get("https://gorest.co.in/public/v1/users")
+                        .then()
+                        .extract().path("data.id")
+                ;
+        System.out.println("idler = " + idler);
+
+    }
+    @Test
+    public void extractingJsonPath6(){
+        List<String> names=
+                given()
+                        .when()
+                        .get("https://gorest.co.in/public/v1/users")
+                        .then()
+                        .extract().path("data.name")
+                ;
+        System.out.println("names = " + names);
+
+    }
+    @Test
+    public void extractingJsonPathResponsAll(){
+
+        Response body=
+                 given()
+                           .when()
+                           .get("https://gorest.co.in/public/v1/users")
+
+                           .then()
+                           .extract().response()
+        ;
+        List<Integer> idler= body.path("data.id");
+        List<String> isimler= body.path("data.name");
+        int limit = body.path("meta.pagination.limit");
+
+        System.out.println("idler = " + idler);
+        System.out.println("isimler = " + isimler);
+        System.out.println("limit = " + limit);
+
+        Assert.assertTrue(isimler.contains("Mahesh Menon"));
+        Assert.assertTrue(idler.contains(5599126));
+        Assert.assertTrue(limit==10);
+
+
+
+
     }
 }
